@@ -1,7 +1,6 @@
 import { Component, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
 import {
   BoxGeometry,
-  Camera,
   DirectionalLight,
   Mesh,
   MeshPhongMaterial,
@@ -21,7 +20,7 @@ export class ResponsiveComponent implements AfterViewInit {
   private renderer!: WebGLRenderer;
   private cubes!: Mesh[];
   private scene!: Scene;
-  private camera!: Camera;
+  private camera!: PerspectiveCamera;
 
   constructor() {}
 
@@ -69,6 +68,16 @@ export class ResponsiveComponent implements AfterViewInit {
 
   private render(time: number) {
     time *= 0.001;
+
+    const canvas = this.renderer.domElement;
+    const pixelRatio = window.devicePixelRatio;
+    const actualWidth = canvas.clientWidth * pixelRatio;
+    const actualHeight = canvas.clientHeight * pixelRatio;
+    if (canvas.width !== actualWidth || canvas.height !== actualHeight) {
+      this.renderer.setSize(actualWidth, actualHeight, false);
+      this.camera.aspect = actualWidth / actualHeight;
+      this.camera.updateProjectionMatrix();
+    }
 
     this.cubes.forEach((cube, ndx) => {
       const speed = 1 + ndx * 0.1;
