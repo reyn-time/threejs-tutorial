@@ -3,14 +3,12 @@ import {
   BoxGeometry,
   Camera,
   DirectionalLight,
-  Geometry,
   Mesh,
   MeshPhongMaterial,
   PerspectiveCamera,
   Scene,
   WebGLRenderer,
 } from 'three';
-import { MeshService } from '../threejs/mesh/mesh.service';
 
 @Component({
   selector: 'app-responsive',
@@ -21,8 +19,11 @@ export class ResponsiveComponent implements AfterViewInit {
   @ViewChild('rendererContainer') rendererContainer!: ElementRef;
 
   private renderer!: WebGLRenderer;
+  private cubes!: Mesh[];
+  private scene!: Scene;
+  private camera!: Camera;
 
-  constructor(private readonly meshService: MeshService) {}
+  constructor() {}
 
   ngAfterViewInit() {
     this.renderer = new WebGLRenderer({
@@ -37,68 +38,47 @@ export class ResponsiveComponent implements AfterViewInit {
     const aspect = 2;
     const near = 0.1;
     const far = 5;
-    const camera = new PerspectiveCamera(fov, aspect, near, far);
-    camera.position.z = 2;
+    this.camera = new PerspectiveCamera(fov, aspect, near, far);
+    this.camera.position.z = 2;
 
     // scene
-    const scene = new Scene();
+    this.scene = new Scene();
 
     // light
     const color = 0xffffff;
     const intensity = 1;
     const light = new DirectionalLight(color, intensity);
     light.position.set(-1, 2, 4);
-    scene.add(light);
+    this.scene.add(light);
 
-    const geometry = new BoxGeometry();
-
-    const cubes = [
-      this.makeInstance(scene, geometry, 0x44aa88, 0),
-      this.makeInstance(scene, geometry, 0x8844aa, -2),
-      this.makeInstance(scene, geometry, 0xaa8844, 2),
-    ];
-
-    requestAnimationFrame((time) =>
-      this.render(time, cubes, this.renderer, scene, camera)
+    // cubes
+    const cubeGeometry = new BoxGeometry();
+    const cubeMaterials = [0x44aa88, 0x8844aa, 0xaa8844].map(
+      (color) => new MeshPhongMaterial({ color })
     );
+    this.cubes = cubeMaterials.map((material, index) => {
+      const mesh = new Mesh(cubeGeometry, material);
+      mesh.position.x = -2 + 2 * index;
+      return mesh;
+    });
+
+    this.cubes.forEach((cube) => this.scene.add(cube));
+
+    requestAnimationFrame((time) => this.render(time));
   }
 
-  private makeInstance(
-    scene: Scene,
-    geometry: Geometry,
-    color: number,
-    x: number
-  ) {
-    const material = new MeshPhongMaterial({ color });
-
-    const cube = new Mesh(geometry, material);
-    scene.add(cube);
-
-    cube.position.x = x;
-
-    return cube;
-  }
-
-  private render(
-    time: number,
-    cubes: Mesh[],
-    renderer: WebGLRenderer,
-    scene: Scene,
-    camera: Camera
-  ) {
+  private render(time: number) {
     time *= 0.001;
 
-    cubes.forEach((cube, ndx) => {
+    this.cubes.forEach((cube, ndx) => {
       const speed = 1 + ndx * 0.1;
       const rot = time * speed;
       cube.rotation.x = rot;
       cube.rotation.y = rot;
     });
 
-    this.renderer.render(scene, camera);
+    this.renderer.render(this.scene, this.camera);
 
-    requestAnimationFrame((time) =>
-      this.render(time, cubes, renderer, scene, camera)
-    );
+    requestAnimationFrame((time) => this.render(time));
   }
 }
