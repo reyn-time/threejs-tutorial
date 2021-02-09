@@ -1,1 +1,5 @@
-<canvas #rendererContainer></canvas>
+<app-base-renderer
+  [camera]="camera"
+  [scene]="scene"
+  (renderStart)="render($event)"
+></app-base-renderer>

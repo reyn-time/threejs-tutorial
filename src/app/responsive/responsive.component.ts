@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {
   BoxGeometry,
   DirectionalLight,
@@ -6,33 +6,19 @@ import {
   MeshPhongMaterial,
   PerspectiveCamera,
   Scene,
-  WebGLRenderer,
 } from 'three';
 
 @Component({
   selector: 'app-responsive',
   templateUrl: './responsive.component.html',
-  styleUrls: ['./responsive.component.css'],
 })
-export class ResponsiveComponent implements AfterViewInit {
-  @ViewChild('rendererContainer') rendererContainer!: ElementRef;
+export class ResponsiveComponent implements OnInit {
+  public camera: PerspectiveCamera;
+  public scene: Scene;
 
-  private renderer!: WebGLRenderer;
   private cubes!: Mesh[];
-  private scene!: Scene;
-  private camera!: PerspectiveCamera;
 
-  constructor() {}
-
-  ngAfterViewInit() {
-    this.renderer = new WebGLRenderer({
-      canvas: this.rendererContainer.nativeElement,
-    });
-    this.animate();
-  }
-
-  private animate() {
-    // camera
+  constructor() {
     const fov = 75;
     const aspect = 2;
     const near = 0.1;
@@ -40,9 +26,10 @@ export class ResponsiveComponent implements AfterViewInit {
     this.camera = new PerspectiveCamera(fov, aspect, near, far);
     this.camera.position.z = 2;
 
-    // scene
     this.scene = new Scene();
+  }
 
+  ngOnInit() {
     // light
     const color = 0xffffff;
     const intensity = 1;
@@ -62,22 +49,10 @@ export class ResponsiveComponent implements AfterViewInit {
     });
 
     this.cubes.forEach((cube) => this.scene.add(cube));
-
-    requestAnimationFrame((time) => this.render(time));
   }
 
-  private render(time: number) {
-    time *= 0.001;
-
-    const canvas = this.renderer.domElement;
-    const pixelRatio = window.devicePixelRatio;
-    const actualWidth = canvas.clientWidth * pixelRatio;
-    const actualHeight = canvas.clientHeight * pixelRatio;
-    if (canvas.width !== actualWidth || canvas.height !== actualHeight) {
-      this.renderer.setSize(actualWidth, actualHeight, false);
-      this.camera.aspect = actualWidth / actualHeight;
-      this.camera.updateProjectionMatrix();
-    }
+  public render(time: number) {
+    time /= 1000;
 
     this.cubes.forEach((cube, ndx) => {
       const speed = 1 + ndx * 0.1;
@@ -85,9 +60,5 @@ export class ResponsiveComponent implements AfterViewInit {
       cube.rotation.x = rot;
       cube.rotation.y = rot;
     });
-
-    this.renderer.render(this.scene, this.camera);
-
-    requestAnimationFrame((time) => this.render(time));
   }
 }
