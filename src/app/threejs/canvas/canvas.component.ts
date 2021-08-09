@@ -1,30 +1,27 @@
-import { AfterViewInit, Component, ElementRef, NgZone, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, forwardRef, NgZone, Provider, ViewChild } from '@angular/core';
 import { Scene, PerspectiveCamera, WebGLRenderer, DirectionalLight, BoxGeometry, Mesh, MeshPhongMaterial } from 'three';
+import { BaseCanvas } from './base-canvas';
 
-
+const canvasBinding: Provider = {
+  provide: BaseCanvas,
+  useExisting: forwardRef(() => CanvasComponent)
+};
 @Component({
   selector: 'app-canvas',
   templateUrl: './canvas.component.html',
-  styleUrls: ['./canvas.component.css']
+  styleUrls: ['./canvas.component.css'],
+  providers: [canvasBinding]
 })
-export class CanvasComponent implements AfterViewInit {
-  public scene: Scene;
+export class CanvasComponent extends BaseCanvas implements AfterViewInit {
   private camera: PerspectiveCamera;
 
   private renderer!: WebGLRenderer;
   @ViewChild('rendererContainer') private rendererContainer!: ElementRef;
 
   constructor(private readonly ngZone: NgZone) {
-    this.scene = new Scene();
+    super();
     this.camera = new PerspectiveCamera(75, 2, 0.1, 5);
     this.camera.position.z = 2;
-
-    // light
-    const color = 0xffffff;
-    const intensity = 1;
-    const light = new DirectionalLight(color, intensity);
-    light.position.set(-1, 2, 4);
-    this.scene.add(light);
 
     // cube
     const cubeGeometry = new BoxGeometry();
