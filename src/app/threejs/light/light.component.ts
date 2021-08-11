@@ -4,10 +4,10 @@ import { BaseCanvas } from '../canvas/base-canvas';
 
 @Component({
   selector: 'app-light',
-  templateUrl: './light.component.html'
+  template: '<div></div>'
 })
 export class LightComponent implements OnChanges {
-  @Input() color = 0xffffff;
+  @Input() color = '#ffffff';
   @Input() intensity = 1;
   @Input() position = {x: -1, y: 2, z: 4};
 
