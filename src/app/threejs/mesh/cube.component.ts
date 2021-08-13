@@ -1,26 +1,25 @@
-import { Component, Host, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, forwardRef, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { BoxGeometry, Mesh, MeshPhongMaterial } from 'three';
-import { BaseCanvas } from '../canvas/base-canvas';
+import { MESH, MeshProvider } from './animate';
 
 @Component({
   selector: 'app-cube',
-  template: '<div></div>'
+  template: '<div appMesh></div>',
+  providers: [{provide: MESH, useExisting: forwardRef(() => CubeComponent)}]
 })
-
-export class CubeComponent implements OnChanges {
+export class CubeComponent implements OnChanges, MeshProvider {
   @Input() color = '#44aa88';
   @Input() position = {x: 0, y: 0, z: 0};
   @Input() rotation = {x: 0, y: 0, z: 0};
 
   public cube: Mesh<BoxGeometry, MeshPhongMaterial>;
 
-  constructor(@Host() private readonly canvas: BaseCanvas) {
+  constructor() {
     const geometry = new BoxGeometry();
     const material = new MeshPhongMaterial({color: this.color})
     this.cube = new Mesh(geometry, material);
     this.setPosition();
     this.setRotation();
-    this.canvas.scene.add(this.cube);
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -35,6 +34,10 @@ export class CubeComponent implements OnChanges {
     if (changes.rotation && changes.rotation.currentValue) {
       this.setRotation();
     }
+  }
+
+  getMesh(): Mesh {
+    return this.cube;
   }
 
   private setPosition(): void {

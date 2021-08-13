@@ -1,8 +1,6 @@
 <app-canvas>
   <app-light></app-light>
-  <div *ngIf="rotations$ | async as rotations">
-    <app-cube [position]="{x: -2, y: 0, z: 0}" color="#44aa88" [rotation]="rotations[0]"></app-cube>
-    <app-cube [position]="{x: 0, y: 0, z: 0}" color="#8844aa" [rotation]="rotations[1]"></app-cube>
-    <app-cube [position]="{x: 2, y: 0, z: 0}" color="#aa8844" [rotation]="rotations[2]"></app-cube>
-  </div>
+  <app-cube [rotateSpeed]="1" [position]="{x: -2, y: 0, z: 0}" color="#44aa88"></app-cube>
+  <app-cube [rotateSpeed]="2" [position]="{x: 0, y: 0, z: 0}" color="#8844aa"></app-cube>
+  <app-cube [rotateSpeed]="3" [position]="{x: 2, y: 0, z: 0}" color="#aa8844"></app-cube>
 </app-canvas>

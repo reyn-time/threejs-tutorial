@@ -1,5 +1,5 @@
-import { AfterViewInit, Component, ElementRef, forwardRef, NgZone, Provider, ViewChild } from '@angular/core';
-import { Scene, PerspectiveCamera, WebGLRenderer, DirectionalLight, BoxGeometry, Mesh, MeshPhongMaterial } from 'three';
+import { AfterViewInit, Component, ElementRef, forwardRef, NgZone, Provider, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { PerspectiveCamera, WebGLRenderer } from 'three';
 import { BaseCanvas } from './base-canvas';
 
 const canvasBinding: Provider = {
@@ -44,6 +44,8 @@ export class CanvasComponent extends BaseCanvas implements AfterViewInit {
       this.camera.aspect = actualWidth / actualHeight;
       this.camera.updateProjectionMatrix();
     }
+
+    this.meshes.forEach(mesh => mesh.render(time));
 
     this.renderer.render(this.scene, this.camera);
 
