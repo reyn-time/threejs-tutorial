@@ -11,7 +11,7 @@ import { MeshDirective } from './threejs/mesh/mesh.directive';
 import { RotateDirective } from './threejs/mesh/rotate.directive';
 
 @NgModule({
-  declarations: [AppComponent, ResponsiveComponent, CanvasComponent, LightComponent, CubeComponent, MeshDirective, RotateDirective],
+  declarations: [AppComponent, ResponsiveComponent, CanvasComponent, LightComponent, CubeComponent, MeshDirective, RotateDirective,],
   imports: [BrowserModule, AppRoutingModule],
   providers: [],
   bootstrap: [AppComponent],

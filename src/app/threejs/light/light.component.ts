@@ -1,6 +1,6 @@
-import { Component, Host, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { DirectionalLight } from 'three';
-import { BaseCanvas } from '../canvas/base-canvas';
+import { BaseScene } from '../scene/base-scene';
 
 @Component({
   selector: 'app-light',
@@ -13,10 +13,10 @@ export class LightComponent implements OnChanges {
 
   public light: DirectionalLight;
 
-  constructor(@Host() private readonly canvas: BaseCanvas) {
+  constructor(private readonly scene: BaseScene) {
     this.light = new DirectionalLight(this.color, this.intensity);
     this.light.position.set(this.position.x, this.position.y, this.position.z);
-    this.canvas.scene.add(this.light);
+    this.scene.scene.add(this.light);
   }
 
   ngOnChanges(changes: SimpleChanges): void {

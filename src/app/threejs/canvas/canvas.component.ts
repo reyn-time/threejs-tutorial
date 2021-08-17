@@ -1,25 +1,19 @@
-import { AfterViewInit, Component, ElementRef, forwardRef, NgZone, Provider, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, NgZone, ViewChild } from '@angular/core';
 import { PerspectiveCamera, WebGLRenderer } from 'three';
-import { BaseCanvas } from './base-canvas';
+import { BaseScene } from '../scene/base-scene';
 
-const canvasBinding: Provider = {
-  provide: BaseCanvas,
-  useExisting: forwardRef(() => CanvasComponent)
-};
 @Component({
   selector: 'app-canvas',
   templateUrl: './canvas.component.html',
-  styleUrls: ['./canvas.component.css'],
-  providers: [canvasBinding]
+  styleUrls: ['./canvas.component.css']
 })
-export class CanvasComponent extends BaseCanvas implements AfterViewInit {
+export class CanvasComponent implements AfterViewInit {
   private camera: PerspectiveCamera;
 
   private renderer!: WebGLRenderer;
   @ViewChild('rendererContainer') private rendererContainer!: ElementRef;
 
-  constructor(private readonly ngZone: NgZone) {
-    super();
+  constructor(private readonly ngZone: NgZone, private readonly scene: BaseScene) {
     this.camera = new PerspectiveCamera(75, 2, 0.1, 5);
     this.camera.position.z = 2;
   }
@@ -45,9 +39,9 @@ export class CanvasComponent extends BaseCanvas implements AfterViewInit {
       this.camera.updateProjectionMatrix();
     }
 
-    this.meshes.forEach(mesh => mesh.render(time));
+    this.scene.meshes.forEach(mesh => mesh.render(time));
 
-    this.renderer.render(this.scene, this.camera);
+    this.renderer.render(this.scene.scene, this.camera);
 
     window.requestAnimationFrame((time) => this.render(time));
   }

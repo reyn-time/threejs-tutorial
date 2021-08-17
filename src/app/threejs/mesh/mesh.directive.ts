@@ -1,6 +1,6 @@
 import { Directive, Inject, OnDestroy, Optional } from '@angular/core';
 import { Mesh } from 'three';
-import { BaseCanvas } from '../canvas/base-canvas';
+import { BaseScene } from '../scene/base-scene';
 import { ANIMATE, MESH, MeshProvider, OnAnimate } from './animate';
 
 @Directive({
@@ -9,10 +9,10 @@ import { ANIMATE, MESH, MeshProvider, OnAnimate } from './animate';
 export class MeshDirective implements OnDestroy {
   private mesh: Mesh;
 
-  constructor(private readonly canvas: BaseCanvas, @Inject(MESH) private readonly meshProvider: MeshProvider, @Optional() @Inject(ANIMATE) private readonly animate: OnAnimate | null) {
-    this.canvas.meshes.push(this);
+  constructor(private readonly scene: BaseScene, @Inject(MESH) private readonly meshProvider: MeshProvider, @Optional() @Inject(ANIMATE) private readonly animate: OnAnimate | null) {
+    this.scene.meshes.push(this);
     this.mesh = this.meshProvider.getMesh();
-    this.canvas.scene.add(this.mesh);
+    this.scene.scene.add(this.mesh);
   }
 
   public render(time: number): void {
@@ -22,7 +22,7 @@ export class MeshDirective implements OnDestroy {
   }
 
   public ngOnDestroy(): void {
-    this.canvas.meshes = this.canvas.meshes.filter(x => x !== this);
-    this.canvas.scene.remove(this.mesh);
+    this.scene.meshes = this.scene.meshes.filter(x => x !== this);
+    this.scene.scene.remove(this.mesh);
   }
 }
